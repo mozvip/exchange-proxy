@@ -139,7 +139,7 @@ public class ActiveSyncProxy {
 									dumpToFile(request.getQuery().deviceId, "Response", request.getQuery().command, originalContent, contentType);
 								}
 								if (request.getQuery().command.isResponseMustBeModified()) {
-									byte[] content = injectValues(id, contentType, originalContent, originalValues);
+									byte[] content = injectValues(id, originalContent, originalValues);
 									contentLength = content.length;
 									str = new String(content, "UTF-8");
 								} else {
@@ -244,7 +244,7 @@ public class ActiveSyncProxy {
 						if (contentType.startsWith("application/vnd.ms-sync")) {
 							if (query.command.isRequestMustBeModified()) {
 								try {
-									content = injectValues(id, contentType, originalContent, overrides);
+									content = injectValues(id, originalContent, overrides);
 								} catch (XmlPullParserException|IOException e) {
 									LOGGER.error(e.getMessage(), e);
 								}
@@ -269,7 +269,7 @@ public class ActiveSyncProxy {
 				return new ActiveSyncRequest(query, builder.build());
 			}
 
-			private byte[] injectValues(long id, String contentType, byte[] wbxmlContent, Map<String, String> valuesToInject) throws XmlPullParserException, IOException {
+			private byte[] injectValues(long id, byte[] wbxmlContent, Map<String, String> valuesToInject) throws XmlPullParserException, IOException {
 				byte[] content;
 				
 				String xmlContent = null;
