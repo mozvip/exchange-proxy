@@ -18,12 +18,9 @@ public class ExchangeProxyApplication extends Application<ExchangeProxyConfigura
 
 	@Override
 	public void run(ExchangeProxyConfiguration configuration, Environment environment) throws Exception {
-
 		final ExchangeProxyHealthCheck healthCheck =  new ExchangeProxyHealthCheck(configuration.getServerHost());
 		environment.healthChecks().register("serverHost", healthCheck);
-
 		ActiveSyncProxy proxy = new ActiveSyncProxy(configuration);
-		proxy.start();
-
+		environment.lifecycle().manage(proxy);
 	}
 }

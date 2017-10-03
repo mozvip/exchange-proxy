@@ -2,6 +2,7 @@ package com.github.mozvip.exchange.core;
 
 import com.github.mozvip.exchange.ExchangeProxyConfiguration;
 import com.github.mozvip.exchange.wbxml.WbxmlUtils;
+import io.dropwizard.lifecycle.Managed;
 import io.undertow.Undertow;
 import io.undertow.UndertowOptions;
 import io.undertow.server.HttpHandler;
@@ -34,7 +35,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class ActiveSyncProxy {
+public class ActiveSyncProxy implements Managed {
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(ActiveSyncProxy.class);
 
@@ -46,8 +47,11 @@ public class ActiveSyncProxy {
 	public ActiveSyncProxy(ExchangeProxyConfiguration configuration){
 	    this.configuration = configuration;
 	}
-    
-    public void start() {
+
+	private Undertow server;
+
+	@Override
+    public void start() throws Exception {
 
 		final String exchangeBaseURL = "https://" + configuration.getServerHost();
 		
@@ -77,7 +81,7 @@ public class ActiveSyncProxy {
 		b.connectTimeout(360, TimeUnit.SECONDS);
 		final OkHttpClient client = b.build();
 
-		Undertow server = Undertow.builder()
+		server = Undertow.builder()
 				.setServerOption(UndertowOptions.IDLE_TIMEOUT, 360 * 1000)
 				.setServerOption(UndertowOptions.REQUEST_PARSE_TIMEOUT, -1)
 				.setServerOption(UndertowOptions.NO_REQUEST_TIMEOUT, 360 * 1000)
@@ -319,7 +323,12 @@ public class ActiveSyncProxy {
 		server.start();
 	}
 
-	private void dumpToFile(String deviceId, String fileNamePrefix, ActiveSyncCommand command, byte[] originalContent, String contentType) {
+    @Override
+    public void stop() throws Exception {
+        server.stop();
+    }
+
+    private void dumpToFile(String deviceId, String fileNamePrefix, ActiveSyncCommand command, byte[] originalContent, String contentType) {
 		try {
 			String contentTypeForFilename = contentType.replace("/", "_");
 			String filename = String.format("%s-%s-%d-%s-%s.bin", deviceId, fileNamePrefix, System.currentTimeMillis(), command.name(), contentTypeForFilename);
