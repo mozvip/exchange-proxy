@@ -1,0 +1,24 @@
+serverHost: mailserver.domain.com
+defaultDeviceType: iPad
+defaultUserAgent: Apple-iPad5C3/1407.60
+defaultOs: iOS 10.3.3 14G60
+defaultFriendlyName: iPad Air 2
+defaultOsLanguage: fr-FR
+defaultModel: iPad5C3
+proxyPort: 9090
+logging:
+    level: TRACE
+    loggers:
+       "org.hibernate.validator.internal.engine.constraintvalidation.ConstraintTree": INFO
+       "org.glassfish.jersey": INFO
+       "javax.management.mbeanserver": INFO
+    appenders:
+    - type: console
+    - type: file
+      threshold: INFO
+      logFormat: "%-6level [%d{HH:mm:ss.SSS}] [%t] %logger{5} - %X{code} %msg %n"
+      currentLogFilename: exchangeproxy.log
+      archivedLogFilenamePattern: exchangeproxy-%d{yyyy-MM-dd}-%i.log.gz
+      archivedFileCount: 7
+      timeZone: UTC+2
+      maxFileSize: 15MB
