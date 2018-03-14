@@ -54,6 +54,7 @@
 		</dependency>
 	</dependencies>
 	<build>
+		<defaultGoal>package</defaultGoal>
 		<plugins>
 			<plugin>
 				<groupId>io.takari</groupId>
