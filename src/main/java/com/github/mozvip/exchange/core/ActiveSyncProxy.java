@@ -38,6 +38,7 @@ import java.util.regex.Pattern;
 public class ActiveSyncProxy implements Managed {
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(ActiveSyncProxy.class);
+	public static final String USER_AGENT = "User-Agent";
 
 	private ExchangeProxyConfiguration configuration;
 
@@ -58,7 +59,7 @@ public class ActiveSyncProxy implements Managed {
 		overrides = new HashMap<>();
 		overrides.put("DeviceType", configuration.getDefaultDeviceType());
 		overrides.put("UserAgent", configuration.getDefaultUserAgent());
-		overrides.put("User-Agent", configuration.getDefaultUserAgent());
+		overrides.put(USER_AGENT, configuration.getDefaultUserAgent());
 		
 		overrides.put("OS", configuration.getDefaultOs());
 		overrides.put("OSLanguage", configuration.getDefaultOsLanguage());
@@ -226,9 +227,9 @@ public class ActiveSyncProxy implements Managed {
 					builder.header(headerName.toString(), value);
 				}
 				
-				if (overrides.containsKey("User-Agent")) {
-					builder.removeHeader("User-Agent");
-					builder.addHeader("User-Agent", overrides.get("User-Agent"));
+				if (overrides.containsKey(USER_AGENT)) {
+					builder.removeHeader(USER_AGENT);
+					builder.addHeader(USER_AGENT, overrides.get(USER_AGENT));
 				}
 
 				builder.header("Host", configuration.getServerHost());
