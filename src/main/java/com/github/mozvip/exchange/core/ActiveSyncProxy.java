@@ -57,24 +57,24 @@ public class ActiveSyncProxy implements Managed {
 		final String exchangeBaseURL = "https://" + configuration.getServerHost();
 		
 		overrides = new HashMap<>();
-		overrides.put("DeviceType", configuration.getDefaultDeviceType());
-		overrides.put("UserAgent", configuration.getDefaultUserAgent());
-		overrides.put(USER_AGENT, configuration.getDefaultUserAgent());
+		overrides.put("DeviceType", configuration.getEmulatedDevice().getDefaultDeviceType());
+		overrides.put("UserAgent", configuration.getEmulatedDevice().getDefaultUserAgent());
+		overrides.put(USER_AGENT, configuration.getEmulatedDevice().getDefaultUserAgent());
 		
-		overrides.put("OS", configuration.getDefaultOs());
-		overrides.put("OSLanguage", configuration.getDefaultOsLanguage());
+		overrides.put("OS", configuration.getEmulatedDevice().getDefaultOs());
+		overrides.put("OSLanguage", configuration.getEmulatedDevice().getDefaultOsLanguage());
 
-		overrides.put("FriendlyName", configuration.getDefaultFriendlyName());
-		overrides.put("Model", configuration.getDefaultModel());
+		overrides.put("FriendlyName", configuration.getEmulatedDevice().getDefaultFriendlyName());
+		overrides.put("Model", configuration.getEmulatedDevice().getDefaultModel());
 
-        if (configuration.getDefaultPhoneNumber() != null) {
-            overrides.put("PhoneNumber", configuration.getDefaultPhoneNumber());
+        if (configuration.getEmulatedDevice().getDefaultPhoneNumber() != null) {
+            overrides.put("PhoneNumber", configuration.getEmulatedDevice().getDefaultPhoneNumber());
         }
-		if (configuration.getDefaultIMEI() != null) {
-            overrides.put("IMEI", configuration.getDefaultIMEI());
+		if (configuration.getEmulatedDevice().getDefaultIMEI() != null) {
+            overrides.put("IMEI", configuration.getEmulatedDevice().getDefaultIMEI());
         }
-        if (configuration.getDefaultMobileOperator() != null) {
-            overrides.put("MobileOperator", configuration.getDefaultMobileOperator());
+        if (configuration.getEmulatedDevice().getDefaultMobileOperator() != null) {
+            overrides.put("MobileOperator", configuration.getEmulatedDevice().getDefaultMobileOperator());
         }
 
 		OkHttpClient.Builder b = new OkHttpClient.Builder();
