@@ -19,10 +19,10 @@ public enum ActiveSyncCommand {
 	GET_ITEMS_ESTIMATE("GetItemsEstimate", false, false, false, false),
 	MEETING_RESPONSE("MeetingResponse", false, false, false, false),
 	SEARCH("Search", false, false, false, false),
-	SETTINGS("Settings", true, false, true, false),
+	SETTINGS("Settings", true, false, false, false),
 	PING("Ping", false, false, false, false),
 	ITEM_OPERATIONS("ItemOperations", false, false, false, false),
-	PROVISION("Provision", true, true, false, false),
+	PROVISION("Provision", true, true, true, false),
 	RESOLVE_RECIPIENTS("ResolveRecipients", false, false, false, false),
 	VALIDATE_CERT("ValidateCert", false, false, false, false),
 	FIND("Find", false, false, false, false);
