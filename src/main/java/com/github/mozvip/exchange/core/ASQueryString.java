@@ -1,16 +1,19 @@
 package com.github.mozvip.exchange.core;
 
+import com.github.mozvip.exchange.devices.DeviceManager;
+
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Map;
 
 /**
  *
  */
 public class ASQueryString extends ActiveSyncQueryString {
-	
-	String user;
 
-	public ASQueryString(String queryString) throws IOException {
+	public ASQueryString(DeviceManager deviceManager, String queryString, String userAgent) {
+
+		super(deviceManager, userAgent);
 
 		String[] parameters = queryString.split("&");
 		for (String queryParameter : parameters) {
@@ -18,7 +21,7 @@ public class ASQueryString extends ActiveSyncQueryString {
 			
 			switch (split[0]) {
 			case "DeviceId":
-				deviceId = split[1];
+				originalDeviceId = split[1];
 				break;
 			case "Cmd":
 				command = ActiveSyncCommand.from(split[1]);
@@ -38,23 +41,18 @@ public class ASQueryString extends ActiveSyncQueryString {
 		}
 
 	}
-	
+
 	@Override
-	public void overrideValues(Map<String, String> overrides) {
-		super.overrideValues(overrides);
-		queryParameters.put("DeviceId", deviceId);
-		for (Map.Entry<String, String> entry : overrides.entrySet()) {
-			if (queryParameters.containsKey(entry.getKey())) {
-				queryParameters.put(entry.getKey(), entry.getValue());
-			}
-		}
-	}
-	
-	@Override
-	public String encode() throws IOException {
+	public String encode(AuthorizedDevice auth) throws IOException {
 		StringBuffer queryString = new StringBuffer();
 		for (Map.Entry<String, String> entry : queryParameters.entrySet()) {
-			queryString.append(entry.getKey()).append("=").append(entry.getValue());
+			String valueToUse;
+			if (entry.getKey().equalsIgnoreCase("DeviceId")) {
+				valueToUse = auth.getOverridenId();
+			} else {
+				valueToUse = auth.getOverrides().getOrDefault(entry.getKey(), entry.getValue());
+			}
+			queryString.append(entry.getKey()).append("=").append(valueToUse);
 			queryString.append("&");
 		}
 		queryString.deleteCharAt( queryString.length() - 1 );
@@ -62,4 +60,17 @@ public class ASQueryString extends ActiveSyncQueryString {
 		return queryString.toString();
 	}
 
+	@Override
+	public String toString() {
+		return "ASQueryString{" +
+				"user='" + user + '\'' +
+				", queryParameters=" + queryParameters +
+				", command=" + command +
+				", protocolVersion=" + protocolVersion +
+				", locale=" + locale +
+				", originalDeviceId='" + originalDeviceId + '\'' +
+				", policyKey=" + Arrays.toString(policyKey) +
+				", deviceType='" + deviceType + '\'' +
+				'}';
+	}
 }

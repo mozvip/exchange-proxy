@@ -1,0 +1,37 @@
+exchange:
+  settings:
+    serverHost: mailserver.domain.com
+    proxyPort: 9090
+  deviceTemplates:
+    ipadAir2:
+      name: iPad Air 2 - iOS 10.3.3
+      deviceType: iPad
+      userAgent: Apple-iPad5C3/1407.60
+      os: iOS 10.3.3 14G60
+      friendlyName: iPad Air 2
+      osLanguage: French
+      model: iPad5C3
+    lumia950:
+      name: Lumia 950 - Windows 10.0.15063
+      deviceType: WP8
+      userAgent: MSFT-WIN-4/10.0.15063
+      os: Windows 10.0.15063
+      friendlyName: Lumia 950
+      osLanguage: French
+      model: RM-1104_12707
+  logging:
+    level: INFO
+    loggers:
+      "org.hibernate.validator.internal.engine.constraintvalidation.ConstraintTree": INFO
+      "org.glassfish.jersey": INFO
+      "javax.management.mbeanserver": INFO
+    appenders:
+      - type: console
+      - type: file
+        threshold: INFO
+        logFormat: "[%thread] %highlight(%-6level) %cyan(%logger{15}) [%d{HH:mm:ss.SSS}] [%t] %logger{5} - %X{code} %msg %n"
+        currentLogFilename: exchangeproxy.log
+        archivedLogFilenamePattern: exchangeproxy-%d{yyyy-MM-dd}-%i.log.gz
+        archivedFileCount: 7
+        timeZone: UTC+2
+        maxFileSize: 15MB

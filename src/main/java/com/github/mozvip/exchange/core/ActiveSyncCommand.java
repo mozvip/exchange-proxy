@@ -22,7 +22,7 @@ public enum ActiveSyncCommand {
 	SETTINGS("Settings", true, false, false, false),
 	PING("Ping", false, false, false, false),
 	ITEM_OPERATIONS("ItemOperations", false, false, false, false),
-	PROVISION("Provision", true, true, true, false),
+	PROVISION("Provision", true, true, true, true),
 	RESOLVE_RECIPIENTS("ResolveRecipients", false, false, false, false),
 	VALIDATE_CERT("ValidateCert", false, false, false, false),
 	FIND("Find", false, false, false, false);

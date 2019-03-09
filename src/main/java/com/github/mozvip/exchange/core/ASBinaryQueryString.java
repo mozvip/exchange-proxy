@@ -1,6 +1,6 @@
 package com.github.mozvip.exchange.core;
 
-import org.apache.commons.codec.DecoderException;
+import com.github.mozvip.exchange.devices.DeviceManager;
 import org.apache.commons.codec.binary.Hex;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -71,7 +71,7 @@ public class ASBinaryQueryString extends ActiveSyncQueryString {
 			locale = dis.readUnsignedShort();
 
 			int deviceIdLength = dis.readUnsignedByte();
-			deviceId = new String( readBytes(dis, deviceIdLength) );
+			originalDeviceId = Hex.encodeHexString(readBytes(dis, deviceIdLength)).toUpperCase();
 
 			int policyKeyLength = dis.readUnsignedByte();
 			policyKey = readBytes(dis, policyKeyLength);
@@ -92,7 +92,7 @@ public class ASBinaryQueryString extends ActiveSyncQueryString {
 
 			LOGGER.info(
 					"Original Query String : ProtocolVersion={} Command={} Locale={} DeviceId=0x{} PolicyKey=0x{} DeviceType={}",
-					protocolVersion, command.getLabel(), locale, Hex.encodeHexString(deviceId.getBytes()), Hex.encodeHexString(policyKey),
+					protocolVersion, command.getLabel(), locale, originalDeviceId, Hex.encodeHexString(policyKey),
 					deviceType);
 			
 		} finally {
@@ -102,35 +102,33 @@ public class ASBinaryQueryString extends ActiveSyncQueryString {
 
 	}
 
-	public ASBinaryQueryString(String queryString) throws IOException {
+	public ASBinaryQueryString(DeviceManager deviceManager, String queryString, String userAgent) throws IOException {
+		super(deviceManager, userAgent);
 
 		byte[] decodedBytes = Base64.getDecoder().decode(queryString.getBytes());
 		decodeFromBinary(decodedBytes);
-		
 	}
 
 	@Override
-	public String encode() throws IOException {
-	
+	public String encode(AuthorizedDevice auth) throws IOException {
+
 		try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
 			try (DataOutputStream dos = new DataOutputStream(out)) {
 				dos.write(protocolVersion);
 				dos.write(command.ordinal());
 				dos.writeShort(locale);
 				
-				byte[] deviceIdBytes;
-				try {
-					deviceIdBytes = Hex.decodeHex(deviceId.toCharArray());
-				} catch (DecoderException e) {
-					throw new IOException( e );
-				}
+				byte[] deviceIdBytes = auth.getOverridenId().getBytes();
+
 				dos.write(deviceIdBytes.length);
 				dos.write(deviceIdBytes);
 
 				dos.write(policyKey.length);
 				dos.write(policyKey);
-				dos.write(deviceType.length());
-				dos.write(deviceType.getBytes());
+
+				String deviceTypeToUse = auth.getOverrides().getOrDefault("DeviceType", deviceType);
+				dos.write(deviceTypeToUse.length());
+				dos.write(deviceTypeToUse.getBytes());
 
 				for (Parameter parameter : parameters) {
 					dos.write(parameter.getTag());
@@ -143,9 +141,5 @@ public class ASBinaryQueryString extends ActiveSyncQueryString {
 			return Base64.getEncoder().encodeToString(out.toByteArray());
 		}
 	}
-
-	public void setDeviceType(String deviceType) {
-		this.deviceType = deviceType;
-	}	
 
 }

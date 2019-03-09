@@ -1,4 +1,4 @@
-package com.github.mozvip.exchange.core;
+package com.github.mozvip.exchange.devices;
 
 import java.security.SecureRandom;
 
